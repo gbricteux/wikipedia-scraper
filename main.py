@@ -1,10 +1,9 @@
-from src.api_client import CountryLeadersAPI
-from src.html_scraper import WikipediaScraper
+from src import api_client, html_scraper
 
 def main() -> None: 
 
     # Initialize the countryLeadersAPI module
-    api = CountryLeadersAPI()
+    api= api_client.CountryLeadersAPI()
 
     # Retrieve countries
     countries = api.get_countries()
@@ -19,10 +18,9 @@ def main() -> None:
         
 
     # Initialize the scraper engine
-    scraper = WikipediaScraper()
+    scraper = html_scraper.WikipediaScraper()
 
     scraper.to_json_file("leaders.json", leaders_per_country)
-
 
 if __name__ == "__main__":
     main()
