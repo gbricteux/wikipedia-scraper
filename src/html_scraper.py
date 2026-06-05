@@ -18,12 +18,13 @@ class WikipediaScraper:
 
     def fetch_html(self, url : str) -> str:
         """
-        Function that requests raw HTML text.
+        Method that requests raw HTML text.
 
         :param url: A string with the url of the html to request.
         :return: A string with the html text.
         """
         try:
+            # header is used to tell the website that the script is not from automated bot
             headers = {"User-Agent":"Mozilla/5.0"}
             response = self.session.get(url, headers = headers)
             return response.text
@@ -33,7 +34,7 @@ class WikipediaScraper:
     
     def clean_text(self, text: str) -> str:
         """
-        Function that cleans a text by stripping out unwanted characters, whitespace, or Wikipedia citation brackets.
+        Method that cleans a text by stripping out unwanted characters, whitespace, or Wikipedia citation brackets.
         
         :param text: A string with the text to clean.
         :return: A string with the cleaned text.
@@ -45,7 +46,7 @@ class WikipediaScraper:
 
     def get_first_paragraph(self, html: str) -> str:
         """
-        Function that parses raw HTML with BeautifulSoup, finds the first true biographical narrative paragraph, and returns it.
+        Method that parses raw HTML with BeautifulSoup, finds the first true biographical narrative paragraph, and returns it.
         
         :param html: A string with the html
         """
@@ -58,7 +59,7 @@ class WikipediaScraper:
     
     def to_json_file(self, filepath: str, dictionary : dict) -> None :
         """
-        Function that stores the data structure into a JSON file.
+        Method that stores the data structure into a JSON file.
 
         :param filepath: A string with the file path where the json is stored.
         :param dictionary: A dictionary that is stored in the json file.
