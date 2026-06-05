@@ -1,6 +1,5 @@
 import requests
 from src.html_scraper import WikipediaScraper
-from requests.cookies import RequestsCookieJar
 
 class CountryLeadersAPI:
     '''
@@ -23,6 +22,8 @@ class CountryLeadersAPI:
         self.leaders_endpoint = "leaders"
         self.session = requests.Session()
 
+        self.cookies = requests.get(self.base_url + self.cookies_endpoint).cookies
+
     def close(self):
         """
         Close the HTTP session to release network resources.
@@ -33,47 +34,40 @@ class CountryLeadersAPI:
         self.session.close()
 
 
-    def refresh_cookie(self, old_cookies) -> RequestsCookieJar:
+    def refresh_cookie(self) -> None:
 
         '''
         Check wether current session cookie is still valid  and refreshe it when needed.
-
-        :param old_cookies: the current session cookies used for authentication.
-        :return: A valid RequestsCookieJar object containing active session cookies.
         '''
         # we use /leaders as 
         response = self.session.get(
-            self.base_url + "leaders",
-            params={"country": "fr"},
-            cookies=old_cookies)
+            self.base_url + self.country_endpoint,
+            cookies=self.cookies)
         
         # Check if old cookie is still valid 
-        if response.status_code == 200:
-            return old_cookies
-        else:    
-            return requests.get(self.base_url + "cookie").cookies 
+        if response.status_code != 200:
+            self.cookies = requests.get(self.base_url + self.cookies_endpoint).cookies 
 
-
-    def get_countries(self, cookies) -> dict:
+    def get_countries(self) -> dict:
         '''
         Fetch the list of supported country codes from the API.
 
         This method sends a GET request to the /country endpoint and returns 
         the parsed JSON response.
 
-        :param cookies: authentikation cookies used for the API requests.
         :returns: A dictionary of country codes.
-
         '''
+        
+        self.refresh_cookie()
         response = self.session.get(
-        self.base_url + "countries",
-        cookies=cookies)
+        self.base_url + self.country_endpoint,
+        cookies=self.cookies)
 
         countries = response.json()
 
         return countries
     
-    def get_leaders(self, country: str, cookies: RequestsCookieJar) -> list:
+    def get_leaders(self, country: str) -> list:
         '''
         Fetch leaders for a given country and erich with the wikipedia summary.
 
@@ -84,17 +78,16 @@ class CountryLeadersAPI:
         - Adds a "bio" field containing the first paragraph of wikipedia pages
 
         :param country: Country code (e.g., "fr", "us").
-        :param cookies: Authentication cookies used for API requests.
         :return: A list of leader dictionaries enriched with a "bio" field.
         '''
 
         # Ensure we are using a valid authentication cookie before making API calls
-        cookies = self.refresh_cookie(cookies)
+        self.refresh_cookie()
 
         response = self.session.get(
-            self.base_url + "leaders",
+            self.base_url + self.leaders_endpoint,
             params={"country": country},
-            cookies=cookies)
+            cookies=self.cookies)
 
         leaders = response.json()
 
