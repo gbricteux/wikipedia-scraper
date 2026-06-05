@@ -3,7 +3,7 @@ from src import api_client, html_scraper
 def main() -> None: 
 
     # Initialize the countryLeadersAPI module
-    api= api_client.CountryLeadersAPI()
+    api = api_client.CountryLeadersAPI()
 
     # Retrieve countries
     countries = api.get_countries()
@@ -12,12 +12,14 @@ def main() -> None:
     leaders_per_country = {}
 
     for country in countries:
-        print (f"We are looking for leaders in {country}")
+        print (f"Looking for leaders in {country}")
         leaders = api.get_leaders(country)
         leaders_per_country[country] = leaders
 
     # Store the leaders in json file
     html_scraper.WikipediaScraper.to_json_file("leaders.json", leaders_per_country)
+
+    api.close()
 
 if __name__ == "__main__":
     main()
