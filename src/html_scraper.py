@@ -41,7 +41,8 @@ class WikipediaScraper:
         """
         text = text.strip() # remove end of line at the end of the text
         text = re.sub(r'\[.*\]',"",text) # remove references between brackets
-        text = re.sub(r'\s',' ',text) # replace no-break spaces
+        text = re.sub(r'\s+',' ',text) # replace no-break spaces
+        text = re.sub(r'ⓘ','',text) # removes info icon
         return text
 
     def get_first_paragraph(self, html: str) -> str:
@@ -53,8 +54,15 @@ class WikipediaScraper:
         soup = BeautifulSoup(html, "html.parser")
         paragraphs = soup.find_all("p")
         for par in paragraphs:
-            if re.match(r'^<p(?: id="[a-zA-Z]{4}")?><b(?: id="[a-zA-Z]{4}")?>', str(par)):
+            # assume first paragraph begins with bold tag and has more than 30 characters
+            if re.match(r'^<p(?: id="[a-zA-Z]{4}")?><b(?: id="[a-zA-Z]{4}")?>', str(par)) and len(par.text) > 30:
                 return self.clean_text(par.text)
+        for par in paragraphs:
+            # if not found, take the first paragraph with at least 120 characters
+            if len(par.text) > 120:
+                return self.clean_text(par.text)
+        print("Could not find first paragraph of :")
+        print(paragraphs[0].text)
         return ""
     
     @staticmethod

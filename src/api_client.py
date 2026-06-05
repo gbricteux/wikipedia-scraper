@@ -21,7 +21,6 @@ class CountryLeadersAPI:
         self.cookies_endpoint = "cookie"
         self.leaders_endpoint = "leaders"
         self.session = requests.Session()
-
         self.cookies = requests.get(self.base_url + self.cookies_endpoint).cookies
 
     def close(self):
@@ -37,14 +36,14 @@ class CountryLeadersAPI:
     def refresh_cookie(self) -> None:
 
         '''
-        Check wether current session cookie is still valid  and refreshe it when needed.
+        Check wether current session cookie is still valid  and refresh it when needed.
         '''
-        # we use /leaders as 
+        # Request countries to check cookie validity
         response = self.session.get(
             self.base_url + self.country_endpoint,
             cookies=self.cookies)
         
-        # Check if old cookie is still valid 
+        # update cookie is no more valid
         if response.status_code != 200:
             self.cookies = requests.get(self.base_url + self.cookies_endpoint).cookies 
 
@@ -63,9 +62,7 @@ class CountryLeadersAPI:
         self.base_url + self.country_endpoint,
         cookies=self.cookies)
 
-        countries = response.json()
-
-        return countries
+        return response.json()
     
     def get_leaders(self, country: str) -> list:
         '''
@@ -102,9 +99,7 @@ class CountryLeadersAPI:
                 try:
                     html = wikipedia_scraper.fetch_html(url)
                     # extract only the first paragraph as a short biography
-                    first_paragraph = wikipedia_scraper.get_first_paragraph(html)
-                                   
-                    leader["bio"] = first_paragraph
+                    leader["bio"] = wikipedia_scraper.get_first_paragraph(html)
                 except Exception:
                     # No wikipedia page available
                     leader["bio"] = None
