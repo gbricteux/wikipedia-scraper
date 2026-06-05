@@ -4,7 +4,7 @@ from requests.cookies import RequestsCookieJar
 
 class CountryLeadersAPI:
     '''
-    a class that resposible for cmmunicating with country leaders API.
+    a class that responsible for communicating with country leaders API.
     
     This class handels API requests, session management, and endpoint configuration
     for retrieving information about countries and leaders.
@@ -73,7 +73,7 @@ class CountryLeadersAPI:
 
         return countries
     
-    def get_leaders(self, country, cookies) :
+    def get_leaders(self, country: str, cookies: RequestsCookieJar) -> list:
         '''
         Fetch leaders for a given country and erich with the wikipedia summary.
 
