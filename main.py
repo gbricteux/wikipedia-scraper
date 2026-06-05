@@ -15,12 +15,9 @@ def main() -> None:
         print (f"We are looking for leaders in {country}")
         leaders = api.get_leaders(country)
         leaders_per_country[country] = leaders
-        
 
-    # Initialize the scraper engine
-    scraper = html_scraper.WikipediaScraper()
-
-    scraper.to_json_file("leaders.json", leaders_per_country)
+    # Store the leaders in json file
+    html_scraper.WikipediaScraper.to_json_file("leaders.json", leaders_per_country)
 
 if __name__ == "__main__":
     main()

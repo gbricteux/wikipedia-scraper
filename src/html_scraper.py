@@ -57,7 +57,8 @@ class WikipediaScraper:
                 return self.clean_text(par.text)
         return ""
     
-    def to_json_file(self, filepath: str, dictionary : dict) -> None :
+    @staticmethod
+    def to_json_file(filepath: str, dictionary : dict) -> None :
         """
         Method that stores the data structure into a JSON file.
 
